@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/style.css">
+  <title>Document</title>
+</head>
+<body>
+
+   <div class="champion_solo"></div>
+
+   <div id="utility">
+
+    <button onclick="backToHomepage()"> Retour </button>
+
+   <button onclick="deleteChampion()"> Bannir le champion</button>
+
+   <form action="">
+      <input type="text" name="name" id="name" placeholder="Nouveau Nom">
+      <input type="text" name="type" id="type" placeholder="Nouveau Type">
+      <input type="submit" value="Modifier">
+   </form>
+  
+  </div>
+
+   <script>
+
+    let url = window.location.search
+
+    let id = new URLSearchParams(url).get('id')
+    fetch(`http://localhost:3000/champions/${id}`)
+      .then(response => response.json())
+      .then(data => {
+        const champion_solo = document.querySelector('.champion_solo');
+        const div = document.createElement('div');
+        div.innerHTML = `
+          <h2>${data.name}</h2>
+
+          <img src=https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${data.name}_0.jpg alt="${data.name}">
+          
+          <p>${data.type}</p>
+        `;
+        champion_solo.appendChild(div);
+      });
+
+    const deleteChampion = async() => {
+      let response = await fetch(`http://localhost:3000/champions/${id}`, {
+        method: 'DELETE'
+      })
+      
+      window.location.href = 'index.html'
+    }
+
+    const form = document.querySelector('form')
+    form.addEventListener('submit', async(e) => {
+      e.preventDefault()
+      let name = document.getElementById('name').value
+      let type = document.getElementById('type').value
+      let response = await fetch(`http://localhost:3000/champions/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({name, type})
+      })
+      window.location.href = 'index.html'
+    })
+
+    const backToHomepage = () => {
+      window.location.href = 'index.html'
+    }
+
+   </script>
+  
+  
+</body>
+</html>

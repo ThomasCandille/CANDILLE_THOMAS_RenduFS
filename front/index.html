@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/style.css">
+  <title>Document</title>
+</head>
+<body>
+
+  <h1> Liste des champions </h1>
+
+  <div id="newChampion">
+    <form action="">
+      <input type="text" name="name" id="name" placeholder="Nom">
+      <input type="text" name="type" id="type" placeholder="Type">
+      <input type="submit" value="Ajouter">
+    </form>
+  </div>
+
+  <div id="champion"></div>
+
+  <script>
+
+    const champions = document.getElementById('champion');
+
+    fetch('http://localhost:3000/champions')
+      .then(response => response.json())
+      .then(data => {
+        data.forEach(champion => {
+          const div = document.createElement('div');
+          div.innerHTML = `
+            <img src=https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${champion.name}_0.jpg alt="${champion.name}">
+            <a href="champion.html?id=${champion.id}"><h2>${champion.name}</h2></a>
+            <p>${champion.type}</p>
+          `;
+          champions.appendChild(div);
+        });
+      });
+
+    const form = document.querySelector('form')
+    form.addEventListener('submit', async(e) => {
+      e.preventDefault()
+      let name = document.getElementById('name').value
+      let type = document.getElementById('type').value
+      let response = await fetch('http://localhost:3000/champions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({name, type})
+      })
+      window.location.href = 'index.html'
+    })
+
+  </script>
+  
+</body>
+</html>
